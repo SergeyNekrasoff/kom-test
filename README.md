@@ -1,4 +1,4 @@
-# komplizerte-test
+# Reddit clone
 
 > A Vue.js project
 
