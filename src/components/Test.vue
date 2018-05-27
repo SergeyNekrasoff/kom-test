@@ -17,62 +17,49 @@
       </div>
     </div>
     <div class="pag">
-      <div class="ui pagination menu">
-        <!-- <a class="item" @click="changePage(false, true)">
-          <i class=" icon long arrow alternate left"></i>
-        </a> -->
-        <!-- <a class="item" @click="getPosts(1)">1</a>
-        <a class="item" @click="changePage(page)">2</a> -->
-        <!-- <a class="item" @click="changePage(true, false)">
-          <i class=" icon long arrow alternate right"></i>
-        </a> -->
-      </div>
+      <vue-paginate-al :totalPage="3" @btnClick="getPosts"></vue-paginate-al>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import VuePaginateAl from 'vue-paginate-al'
 
 let REDDIT_POSTS_URL = 'https://www.reddit.com/r/all/top.json?limit=5&count=5'
-let REDDIT_AFTER_POSTS_URL = `${REDDIT_POSTS_URL}&after=`
-let REDDIT_BEFORE_POSTS_URL = `${REDDIT_POSTS_URL}&before=`
+// let REDDIT_AFTER_POSTS_URL = `${REDDIT_POSTS_URL}&after=`
+// let REDDIT_BEFORE_POSTS_URL = `${REDDIT_POSTS_URL}&before=`
 
 export default {
   name: 'list',
+  props: {
+    totalPage: 0,
+    currentPage: 0
+  },
+  components: {
+    VuePaginateAl
+  },
   data () {
     return {
       posts: [],
+      post: {},
       page: 0
     }
   },
   methods: {
-    getPosts (page) {
+    getPosts: function (n) {
       // let url = REDDIT_POSTS_URL
-      let url = 'https://www.reddit.com/r/subreddit/hot'
 
-      // console.log(`url: ${JSON.stringify(url)}`)
-
-      // else {
-      //   url = REDDIT_BEFORE_POSTS_URL
-      //   this.page = this.page - 1
-      // }
-
-      axios.get(url)
-        .then(response => {
-          this.posts = this.posts.concat(response.data.data.children)
-
-          console.log(`this.posts: ${JSON.stringify(response)}`)
-
-          // if (page === 2) {
-          //   url = REDDIT_AFTER_POSTS_URL
-          //   this.posts = ''
-          //   this.posts = this.post.concat(response.data.data.after)
-          // }
-        })
-        .catch(error => {
-          console.error(error)
-        })
+      // axios.get(url)
+      //   .then(response => {
+      //     this.posts = this.posts.concat(response.data.data.children)
+      //   })
+      //   .catch(error => {
+      //     console.error(error)
+      //   })
+      // console.log(`n: ${n}`)
+      // console.log(`current: ${this.currentPage}`)
+      // console.log(`current: ${this.totalPage}`)
     },
     getImage: function (img) {
       if (img && img !== 'self' && img !== 'nsfw') {
@@ -129,14 +116,27 @@ export default {
       }
 
       return Math.floor(seconds) + ' seconds ago'
-    },
-    changePage: function (page) {
-      // this.page = 1
-      // this.getPosts()
     }
   },
   created: function () {
-    this.getPosts()
+    let url = REDDIT_POSTS_URL
+
+    axios.get(url)
+      .then(response => {
+        // this.posts = this.posts.concat(response.data.data.children)
+        let items = this.posts.concat(response.data.data.children)
+
+        console.log(`items: ${response.json()}`)
+
+        for (let i; i < items.length; i++) {
+          // this.post = posts[i]
+
+          // console.log(`this.post: ${items[i]}`)
+        }
+      })
+      .catch(error => {
+        console.error(error)
+      })
   }
 }
 
@@ -148,6 +148,10 @@ export default {
   border-radius: .2rem;
   box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
   padding: 16px;
+
+  .label {
+    margin-top: 8px;
+  }
 }
 
 .pag {

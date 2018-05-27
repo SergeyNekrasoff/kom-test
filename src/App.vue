@@ -2,20 +2,21 @@
   <div id="app">
     <toolbar slot="toolbar"/>
     <main>
-      <feedList/>
+      <feedlist/>
     </main>
   </div>
 </template>
 
 <script>
 import Toolbar from './components/Toolbar'
-import FeedList from './components/FeedList'
+// import FeedList from './components/FeedList'
+import Feedlist from './components/Test'
 
 export default {
   name: 'App',
   components: {
     Toolbar,
-    FeedList
+    Feedlist
   }
 }
 </script>
@@ -33,13 +34,6 @@ body {
 main {
   max-width: 960px;
   margin: 100px auto;
-
-  .post {
-    background: #fff;
-    border-radius: .28571429rem;
-    box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
-    padding: 16px;
-  }
 }
 
 #app {

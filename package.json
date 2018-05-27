@@ -1,5 +1,5 @@
 {
-  "name": "komplizerte-test",
+  "name": "Reddit clone",
   "version": "1.0.0",
   "description": "A Vue.js project",
   "author": "SergeyNekrasoff <Judixel2015@ya.ru>",
@@ -20,6 +20,7 @@
     "semantic-ui-css": "^2.3.1",
     "semantic-ui-vue": "^0.2.10",
     "vue": "^2.5.2",
+    "vue-paginate-al": "^1.0.18",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

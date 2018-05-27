@@ -2,7 +2,7 @@
     <header class="header">
       <div class="ui top attached menu">
         <div class="ui dropdown icon item">
-          <i class="wrench icon"></i>
+          <i class="reddit alien icon"></i>
           <div class="menu">
             <div class="item">
               <i class="dropdown icon"></i>
