@@ -9,8 +9,7 @@
 
 <script>
 import Toolbar from './components/Toolbar'
-// import FeedList from './components/FeedList'
-import Feedlist from './components/Test'
+import Feedlist from './components/Feedlist'
 
 export default {
   name: 'App',
@@ -34,6 +33,7 @@ body {
 main {
   max-width: 960px;
   margin: 100px auto;
+  padding: 0 16px;
 }
 
 #app {
@@ -41,5 +41,4 @@ main {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 </style>

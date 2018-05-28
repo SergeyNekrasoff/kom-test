@@ -1,11 +1,12 @@
 <template>
   <div>
-    <div v-for="post in posts" :key="post.id" class="post ui feed dividing">
-      <div class="event">
-        <div class="label">
-          <img :src="getImage(post.data.thumbnail)" class="ui image">
-        </div>
-        <div class="content">
+    <animated-group-bounce-in>
+      <div v-for="(post, index) in posts" :key="index" class="post ui feed dividing" data-testid="post">
+        <div class="event">
+          <div class="label">
+            <img :src="getImage(post.data.thumbnail)" class="ui image">
+          </div>
+          <div class="content">
             <div class="user">
               {{ post.data.author }} <span class="date"> | {{ getDate(post.data.created_utc) }}</span>
             </div>
@@ -13,19 +14,18 @@
             <div class="meta">
               <a :href="post.data.url">Read more on {{ post.data.domain }}</a>
             </div>
+          </div>
         </div>
       </div>
-    </div>
+    </animated-group-bounce-in>
     <div class="pag">
       <div class="ui pagination menu">
-        <!-- <a class="item" @click="changePage(false, true)">
+        <button :disabled="currentPage === 1" class="item btn-prev" @click="changePage(true, false)" data-test-id="btn-prev">
           <i class=" icon long arrow alternate left"></i>
-        </a> -->
-        <!-- <a class="item" @click="getPosts(1)">1</a>
-        <a class="item" @click="changePage(page)">2</a> -->
-        <!-- <a class="item" @click="changePage(true, false)">
+        </button>
+        <button class="item btn-next" @click="changePage(false, true)" data-test-id="btn-next">
           <i class=" icon long arrow alternate right"></i>
-        </a> -->
+        </button>
       </div>
     </div>
   </div>
@@ -35,53 +35,49 @@
 import axios from 'axios'
 
 let REDDIT_POSTS_URL = 'https://www.reddit.com/r/all/top.json?limit=5&count=5'
-let REDDIT_AFTER_POSTS_URL = `${REDDIT_POSTS_URL}&after=`
-let REDDIT_BEFORE_POSTS_URL = `${REDDIT_POSTS_URL}&before=`
+let REDDIT_AFTER_POSTS_URL = REDDIT_POSTS_URL + '&after='
+let REDDIT_BEFORE_POSTS_URL = REDDIT_POSTS_URL + '&before='
 
 export default {
   name: 'list',
   data () {
     return {
       posts: [],
-      page: 0
+      nextPage: null,
+      beforePage: null,
+      currentPage: 1
     }
   },
   methods: {
     getPosts (page) {
-      // let url = REDDIT_POSTS_URL
-      let url = 'https://www.reddit.com/r/subreddit/hot'
+      let url = REDDIT_POSTS_URL
 
-      // console.log(`url: ${JSON.stringify(url)}`)
-
-      // else {
-      //   url = REDDIT_BEFORE_POSTS_URL
-      //   this.page = this.page - 1
-      // }
+      if (page != null) {
+        if (page === this.nextPage) {
+          url = REDDIT_AFTER_POSTS_URL + page
+        } else {
+          url = REDDIT_BEFORE_POSTS_URL + page
+        }
+      }
 
       axios.get(url)
         .then(response => {
-          this.posts = this.posts.concat(response.data.data.children)
-
-          console.log(`this.posts: ${JSON.stringify(response)}`)
-
-          // if (page === 2) {
-          //   url = REDDIT_AFTER_POSTS_URL
-          //   this.posts = ''
-          //   this.posts = this.post.concat(response.data.data.after)
-          // }
+          this.posts = response.data.data.children
+          this.nextPage = response.data.data.after
+          this.beforePage = response.data.data.before
         })
         .catch(error => {
           console.error(error)
         })
     },
-    getImage: function (img) {
+    getImage (img) {
       if (img && img !== 'self' && img !== 'nsfw') {
         return img
       } else {
         return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFqLwXLSt7nY_iW0vRguTgVIH1gjwuhx28PjI_Dc964oTRx0No'
       }
     },
-    getDate: function (dateUtc) {
+    getDate (dateUtc) {
       let seconds = Math.floor(((new Date().getTime() / 1000) - dateUtc))
       let interval = Math.floor(seconds / 31536000)
 
@@ -130,16 +126,20 @@ export default {
 
       return Math.floor(seconds) + ' seconds ago'
     },
-    changePage: function (page) {
-      // this.page = 1
-      // this.getPosts()
+    changePage (before, next) {
+      if (before === false && next === true) {
+        this.currentPage += 1
+        this.getPosts(this.nextPage)
+      } else if (before === true && next === false) {
+        this.currentPage -= 1
+        this.getPosts(this.beforePage)
+      }
     }
   },
   created: function () {
     this.getPosts()
   }
 }
-
 </script>
 
 <style lang="scss" scoped="true">
@@ -149,8 +149,17 @@ export default {
   box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
   padding: 16px;
 }
-
 .pag {
   text-align: center;
+  margin-top: 16px;
+}
+button.item {
+  border-width: 0;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+    opacity: .1;
+  }
 }
 </style>
